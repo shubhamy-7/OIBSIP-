@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thermal — Temperature Converter</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F2F5F7;
+    --card: #FFFFFF;
+    --ink: #1B2530;
+    --ink-soft: #5A6472;
+    --cold: #2E86AB;
+    --hot: #E4572E;
+    --line: rgba(27, 37, 48, 0.1);
+    --error: #C23B22;
+    --error-bg: #FDEDEA;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    min-height: 100vh;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+  }
+
+  h1, h2 { font-family: 'Space Grotesk', sans-serif; letter-spacing: -0.01em; }
+  .mono { font-family: 'JetBrains Mono', monospace; }
+
+  .app {
+    width: 100%;
+    max-width: 880px;
+  }
+
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.76rem;
+    color: var(--cold);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    text-align: center;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .eyebrow::before, .eyebrow::after {
+    content: '';
+    width: 24px; height: 1px;
+    background: var(--line);
+  }
+
+  h1.title {
+    text-align: center;
+    font-size: clamp(1.7rem, 3.6vw, 2.3rem);
+    margin-bottom: 8px;
+  }
+
+  p.subtitle {
+    text-align: center;
+    color: var(--ink-soft);
+    font-size: 0.98rem;
+    margin-bottom: 40px;
+  }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 40px;
+    box-shadow: 0 20px 50px rgba(27,37,48,0.06);
+  }
+
+  .converter-grid {
+    display: grid;
+    grid-template-columns: 90px 1fr;
+    gap: 40px;
+    align-items: center;
+  }
+
+  /* Thermometer visual */
+  .thermo-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .thermo-tube {
+    width: 20px;
+    height: 220px;
+    border-radius: 10px;
+    background: var(--bg);
+    border: 2px solid var(--line);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: flex-end;
+  }
+
+  .thermo-fill {
+    width: 100%;
+    height: 8%;
+    background: linear-gradient(180deg, var(--hot), var(--cold));
+    border-radius: 0 0 8px 8px;
+    transition: height 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .thermo-bulb {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--cold);
+    border: 2px solid var(--line);
+    margin-top: -4px;
+    transition: background 0.6s ease;
+  }
+
+  .thermo-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--ink-soft);
+  }
+
+  /* Form */
+  fieldset { border: none; }
+
+  .field-row {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 22px;
+    flex-wrap: wrap;
+  }
+
+  .field {
+    flex: 1;
+    min-width: 180px;
+  }
+
+  label {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--ink-soft);
+    margin-bottom: 8px;
+  }
+
+  input[type="text"] {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1.5px solid var(--line);
+    border-radius: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.1rem;
+    color: var(--ink);
+    background: var(--bg);
+    transition: border-color 0.2s;
+  }
+  input[type="text"]:focus {
+    outline: none;
+    border-color: var(--cold);
+  }
+  input[type="text"].invalid {
+    border-color: var(--error);
+  }
+
+  .unit-selector {
+    display: flex;
+    gap: 8px;
+  }
+
+  .unit-btn {
+    flex: 1;
+    padding: 13px 0;
+    border: 1.5px solid var(--line);
+    border-radius: 6px;
+    background: var(--bg);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.92rem;
+    font-weight: 500;
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .unit-btn:hover { border-color: var(--cold); color: var(--ink); }
+  .unit-btn.active {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--card);
+  }
+
+  .error-msg {
+    display: none;
+    background: var(--error-bg);
+    color: var(--error);
+    font-size: 0.86rem;
+    padding: 12px 14px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+  }
+  .error-msg.show { display: block; }
+
+  .convert-btn {
+    width: 100%;
+    padding: 16px 0;
+    background: var(--ink);
+    color: var(--card);
+    border: none;
+    border-radius: 6px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 0.98rem;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+    margin-bottom: 28px;
+  }
+  .convert-btn:hover { background: var(--cold); }
+  .convert-btn:active { transform: scale(0.99); }
+
+  .results-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+
+  .result-card {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 18px 16px;
+    text-align: center;
+    background: var(--bg);
+    transition: border-color 0.3s, background 0.3s;
+  }
+  .result-card.filled {
+    border-color: var(--cold);
+    background: #EAF4F8;
+  }
+
+  .result-unit {
+    font-size: 0.76rem;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 6px;
+  }
+
+  .result-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.3rem;
+    font-weight: 700;
+  }
+
+  footer.foot {
+    text-align: center;
+    margin-top: 28px;
+    font-size: 0.8rem;
+    color: var(--ink-soft);
+  }
+
+  @media (max-width: 620px) {
+    .converter-grid { grid-template-columns: 1fr; }
+    .thermo-wrap { flex-direction: row; }
+    .thermo-tube { width: 160px; height: 20px; flex-direction: row; align-items: stretch; }
+    .thermo-fill { width: 8%; height: 100%; border-radius: 8px 0 0 8px; transition: width 0.6s cubic-bezier(0.22,1,0.36,1); }
+    .thermo-bulb { margin-top: 0; margin-left: -4px; }
+    .card { padding: 28px 22px; }
+    .results-grid { grid-template-columns: 1fr; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+  }
+
+  input:focus-visible, button:focus-visible {
+    outline: 2px solid var(--cold);
+    outline-offset: 2px;
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="eyebrow">OIBSIP · WebDev · Level 1 · Task 3</div>
+  <h1 class="title">Temperature Converter</h1>
+  <p class="subtitle">Convert between Celsius, Fahrenheit, and Kelvin — instantly, with all three units shown at once.</p>
+
+  <div class="card">
+    <div class="converter-grid">
+      <div class="thermo-wrap">
+        <div class="thermo-tube">
+          <div class="thermo-fill" id="thermoFill"></div>
+        </div>
+        <div class="thermo-bulb" id="thermoBulb"></div>
+        <span class="thermo-label" id="thermoLabel">— °C</span>
+      </div>
+
+      <div>
+        <div class="error-msg" id="errorMsg"></div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="tempInput">Temperature value</label>
+            <input type="text" id="tempInput" inputmode="decimal" placeholder="e.g. 25" autocomplete="off">
+          </div>
+          <div class="field">
+            <label>Input unit</label>
+            <div class="unit-selector" id="unitSelector">
+              <button type="button" class="unit-btn active" data-unit="C">°C</button>
+              <button type="button" class="unit-btn" data-unit="F">°F</button>
+              <button type="button" class="unit-btn" data-unit="K">K</button>
+            </div>
+          </div>
+        </div>
+
+        <button class="convert-btn" id="convertBtn">Convert</button>
+
+        <div class="results-grid">
+          <div class="result-card" id="cardC">
+            <div class="result-unit">Celsius</div>
+            <div class="result-value mono" id="valC">—</div>
+          </div>
+          <div class="result-card" id="cardF">
+            <div class="result-unit">Fahrenheit</div>
+            <div class="result-value mono" id="valF">—</div>
+          </div>
+          <div class="result-card" id="cardK">
+            <div class="result-unit">Kelvin</div>
+            <div class="result-value mono" id="valK">—</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="foot mono">Absolute zero: −273.15°C · −459.67°F · 0K</footer>
+</div>
+
+<script>
+  const tempInput = document.getElementById('tempInput');
+  const convertBtn = document.getElementById('convertBtn');
+  const errorMsg = document.getElementById('errorMsg');
+  const unitSelector = document.getElementById('unitSelector');
+  const thermoFill = document.getElementById('thermoFill');
+  const thermoBulb = document.getElementById('thermoBulb');
+  const thermoLabel = document.getElementById('thermoLabel');
+
+  const valC = document.getElementById('valC');
+  const valF = document.getElementById('valF');
+  const valK = document.getElementById('valK');
+  const cardC = document.getElementById('cardC');
+  const cardF = document.getElementById('cardF');
+  const cardK = document.getElementById('cardK');
+
+  let selectedUnit = 'C';
+
+  unitSelector.addEventListener('click', (e) => {
+    const btn = e.target.closest('.unit-btn');
+    if (!btn) return;
+    document.querySelectorAll('.unit-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    selectedUnit = btn.dataset.unit;
+  });
+
+  function showError(message) {
+    errorMsg.textContent = message;
+    errorMsg.classList.add('show');
+    tempInput.classList.add('invalid');
+    [valC, valF, valK].forEach(v => v.textContent = '—');
+    [cardC, cardF, cardK].forEach(c => c.classList.remove('filled'));
+  }
+
+  function clearError() {
+    errorMsg.classList.remove('show');
+    errorMsg.textContent = '';
+    tempInput.classList.remove('invalid');
+  }
+
+  function toCelsius(value, unit) {
+    if (unit === 'C') return value;
+    if (unit === 'F') return (value - 32) * (5 / 9);
+    if (unit === 'K') return value - 273.15;
+  }
+
+  function updateThermo(celsius) {
+    // Map a reasonable display range (-40°C to 60°C) onto the tube fill
+    const min = -40, max = 60;
+    const clamped = Math.max(min, Math.min(max, celsius));
+    const pct = ((clamped - min) / (max - min)) * 100;
+    thermoFill.style.height = pct + '%';
+    thermoFill.style.width = pct + '%'; // used on mobile row layout via CSS override
+
+    // Color: blend from cold blue to hot red based on position
+    const t = pct / 100;
+    const r = Math.round(46 + t * (228 - 46));
+    const g = Math.round(134 + t * (87 - 134));
+    const b = Math.round(171 + t * (46 - 171));
+    thermoBulb.style.background = `rgb(${r}, ${g}, ${b})`;
+    thermoLabel.textContent = celsius.toFixed(1) + ' °C';
+  }
+
+  function convert() {
+    const raw = tempInput.value.trim();
+
+    if (raw === '') {
+      showError('Enter a temperature value to convert.');
+      return;
+    }
+
+    if (!/^-?\d*\.?\d+$/.test(raw)) {
+      showError('That doesn\'t look like a valid number. Use digits only, e.g. 25 or -10.5.');
+      return;
+    }
+
+    const value = parseFloat(raw);
+    const celsius = toCelsius(value, selectedUnit);
+
+    if (celsius < -273.15) {
+      showError('That\'s below absolute zero (−273.15°C) — no real temperature can go that low.');
+      return;
+    }
+
+    clearError();
+
+    const fahrenheit = celsius * (9 / 5) + 32;
+    const kelvin = celsius + 273.15;
+
+    valC.textContent = celsius.toFixed(2) + ' °C';
+    valF.textContent = fahrenheit.toFixed(2) + ' °F';
+    valK.textContent = kelvin.toFixed(2) + ' K';
+
+    [cardC, cardF, cardK].forEach(c => c.classList.add('filled'));
+    updateThermo(celsius);
+  }
+
+  convertBtn.addEventListener('click', convert);
+  tempInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') convert();
+  });
+  tempInput.addEventListener('input', clearError);
+</script>
+
+</body>
+</html>

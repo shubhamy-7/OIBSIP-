@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shubham Yadav — Builder & CS Student</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,500;0,600;1,500&family=Work+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #FAF8F3;
+    --paper-dim: #F1ECE2;
+    --ink: #1C2333;
+    --ink-soft: #4A5169;
+    --amber: #E08E45;
+    --teal: #1F6F6B;
+    --line: rgba(28, 35, 51, 0.12);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Work Sans', sans-serif;
+    line-height: 1.6;
+  }
+
+  h1, h2, h3 { font-family: 'Newsreader', serif; letter-spacing: -0.01em; }
+  .mono { font-family: 'JetBrains Mono', monospace; letter-spacing: 0.01em; }
+  a { color: inherit; text-decoration: none; }
+
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 32px; }
+
+  /* NAV */
+  header.nav {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(250, 248, 243, 0.9);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav-inner {
+    max-width: 1040px; margin: 0 auto; padding: 18px 32px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .brand { font-family: 'JetBrains Mono', monospace; font-size: 0.95rem; font-weight: 500; }
+  .brand .dot { color: var(--amber); }
+  nav.links { display: flex; gap: 32px; font-size: 0.9rem; font-weight: 500; }
+  nav.links a { position: relative; padding: 4px 0; transition: color 0.2s; }
+  nav.links a:hover { color: var(--amber); }
+  .nav-cta {
+    border: 1.5px solid var(--ink); padding: 9px 18px; border-radius: 3px;
+    font-size: 0.85rem; font-weight: 500; transition: all 0.2s;
+  }
+  .nav-cta:hover { background: var(--ink); color: var(--paper); }
+
+  /* HERO */
+  .hero { padding: 88px 0 64px; }
+  .hero-grid {
+    display: grid; grid-template-columns: 1fr 260px; gap: 48px; align-items: center;
+  }
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.76rem;
+    color: var(--teal); text-transform: uppercase; letter-spacing: 0.1em;
+    margin-bottom: 18px; display: flex; align-items: center; gap: 8px;
+  }
+  .eyebrow::before { content: ''; width: 7px; height: 7px; background: var(--teal); border-radius: 50%; }
+  .hero h1 { font-size: clamp(2.1rem, 4.4vw, 3.1rem); line-height: 1.12; margin-bottom: 16px; }
+  .hero h1 em { font-style: italic; color: var(--amber); }
+  .hero p.lede { font-size: 1.04rem; color: var(--ink-soft); max-width: 52ch; margin-bottom: 30px; }
+  .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; }
+  .btn-primary {
+    background: var(--ink); color: var(--paper); padding: 14px 26px; border-radius: 3px;
+    font-weight: 500; font-size: 0.92rem; transition: background 0.2s, transform 0.2s;
+    display: inline-block;
+  }
+  .btn-primary:hover { background: var(--teal); transform: translateY(-2px); }
+  .btn-ghost {
+    font-weight: 500; font-size: 0.92rem; border-bottom: 1.5px solid var(--ink);
+    padding-bottom: 2px; transition: color 0.2s, border-color 0.2s;
+  }
+  .btn-ghost:hover { color: var(--amber); border-color: var(--amber); }
+
+  .avatar-frame {
+    aspect-ratio: 1; background: var(--paper-dim); border: 1px solid var(--line);
+    border-radius: 6px; display: flex; align-items: center; justify-content: center;
+    color: var(--ink-soft); font-family: 'JetBrains Mono', monospace; font-size: 0.78rem;
+    text-align: center; padding: 20px;
+  }
+
+  /* SECTIONS SHARED */
+  section { padding: 80px 0; }
+  .section-head { max-width: 560px; margin-bottom: 44px; }
+  .section-head .eyebrow { color: var(--amber); }
+  .section-head .eyebrow::before { background: var(--amber); }
+  .section-head h2 { font-size: clamp(1.6rem, 3vw, 2.1rem); margin-bottom: 10px; }
+  .section-head p { color: var(--ink-soft); font-size: 0.98rem; }
+
+  /* ABOUT */
+  .about { background: var(--paper-dim); }
+  .about-text { max-width: 68ch; font-size: 1.06rem; color: var(--ink-soft); }
+  .about-text strong { color: var(--ink); font-weight: 600; }
+
+  /* SKILLS */
+  .skill-groups { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+  .skill-group h3 {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; text-transform: uppercase;
+    letter-spacing: 0.08em; color: var(--teal); margin-bottom: 16px; font-weight: 500;
+  }
+  .skill-list { display: flex; flex-wrap: wrap; gap: 10px; }
+  .skill-list span {
+    font-size: 0.86rem; padding: 8px 14px; background: var(--paper);
+    border: 1px solid var(--line); border-radius: 20px;
+  }
+  .about .skill-list span, .skills .skill-list span { background: var(--paper); }
+
+  /* PROJECTS */
+  .project-card {
+    border: 1px solid var(--line); border-radius: 6px; padding: 28px;
+    margin-bottom: 20px; background: var(--paper);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .project-card:hover { transform: translateY(-3px); box-shadow: 0 14px 30px rgba(28,35,51,0.07); }
+  .project-top {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    gap: 16px; margin-bottom: 12px; flex-wrap: wrap;
+  }
+  .project-top h3 { font-size: 1.2rem; }
+  .version-tag {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.74rem;
+    background: var(--paper-dim); border: 1px solid var(--line);
+    padding: 4px 10px; border-radius: 4px; color: var(--teal); white-space: nowrap;
+  }
+  .project-card p.desc { color: var(--ink-soft); font-size: 0.94rem; margin-bottom: 16px; max-width: 62ch; }
+  .project-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+  .project-tags span {
+    font-size: 0.76rem; padding: 5px 11px; border: 1px solid var(--line);
+    border-radius: 20px; color: var(--ink-soft);
+  }
+  .project-link { font-size: 0.88rem; font-weight: 500; color: var(--amber); border-bottom: 1px solid var(--amber); padding-bottom: 1px; }
+
+  /* CONTACT */
+  .contact { background: var(--ink); color: var(--paper); }
+  .contact .section-head p { color: rgba(250,248,243,0.68); }
+  .contact .section-head .eyebrow { color: var(--amber); }
+  .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
+  .contact-links { display: flex; flex-direction: column; gap: 4px; }
+  .contact-row {
+    display: flex; justify-content: space-between; padding: 16px 0;
+    border-bottom: 1px solid rgba(250,248,243,0.14); font-size: 0.96rem;
+  }
+  .contact-row span:first-child { color: rgba(250,248,243,0.55); }
+  .contact-row a { font-weight: 500; transition: color 0.2s; }
+  .contact-row a:hover { color: var(--amber); }
+  .contact-cta {
+    background: var(--amber); color: var(--ink); padding: 16px 28px; border-radius: 4px;
+    font-weight: 600; font-size: 0.98rem; display: inline-block; text-align: center;
+    transition: transform 0.2s;
+  }
+  .contact-cta:hover { transform: translateY(-2px); }
+
+  footer.foot {
+    background: var(--paper-dim); border-top: 1px solid var(--line);
+    padding: 26px 0; text-align: center; font-size: 0.82rem; color: var(--ink-soft);
+  }
+
+  @media (max-width: 820px) {
+    .hero-grid { grid-template-columns: 1fr; }
+    .hero-grid .avatar-frame { max-width: 200px; }
+    .skill-groups { grid-template-columns: 1fr; }
+    .contact-grid { grid-template-columns: 1fr; }
+    nav.links { display: none; }
+  }
+  @media (max-width: 540px) {
+    .wrap, .nav-inner { padding-left: 20px; padding-right: 20px; }
+    section { padding: 56px 0; }
+    .project-top { flex-direction: column; align-items: flex-start; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; scroll-behavior: auto !important; }
+  }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <div class="brand">shubham<span class="dot">.</span>dev</div>
+    <nav class="links">
+      <a href="#about">About</a>
+      <a href="#skills">Skills</a>
+      <a href="#projects">Projects</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <a class="nav-cta" href="#contact">Get in touch</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow">B.Tech CSE · KIT Varanasi</div>
+      <h1>Building products,<br><em>one shipped version</em> at a time.</h1>
+      <p class="lede">I'm Shubham — a first-year Computer Science student who learns by building. I use product thinking and AI-assisted development to design and ship real, working tools, while growing my hands-on coding foundation alongside my formal coursework.</p>
+      <div class="hero-actions">
+        <a class="btn-primary" href="#projects">View my projects</a>
+        <a class="btn-ghost" href="#about">More about me</a>
+      </div>
+    </div>
+    <div class="avatar-frame">Photo placeholder</div>
+  </div>
+</section>
+
+<section class="about" id="about">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">About me</div>
+      <h2>Product thinker, first — coder, always improving.</h2>
+    </div>
+    <p class="about-text">I'm a first-year CSE student at <strong>Kashi Institute of Technology, Varanasi</strong> (AKTU, batch of 2029), where I also serve as <strong>Academic Representative</strong> for my class and <strong>Techno Club Coordinator</strong>. My approach to building is to think in terms of the product first — the problem, the user, the workflow — and then use every tool available, including AI-assisted development, to turn that thinking into something real people can use.</p>
+  </div>
+</section>
+
+<section id="skills">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Skills</div>
+      <h2>What I bring to the table.</h2>
+      <p>A growing technical foundation, paired with a builder's instinct for shipping.</p>
+    </div>
+    <div class="skill-groups">
+      <div class="skill-group">
+        <h3>Currently hands-on with</h3>
+        <div class="skill-list">
+          <span>HTML5</span>
+          <span>CSS3</span>
+          <span>Basic C</span>
+          <span>Git &amp; GitHub</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <h3>Builder toolkit</h3>
+        <div class="skill-list">
+          <span>Product thinking</span>
+          <span>Prompt engineering</span>
+          <span>AI-assisted development</span>
+          <span>Rapid prototyping</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="about" id="projects">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Projects</div>
+      <h2>Live builds, not just class assignments.</h2>
+      <p>Each one shipped as a working, hosted product — built with product thinking and AI-assisted development.</p>
+    </div>
+
+    <div class="project-card">
+      <div class="project-top">
+        <h3>AVEN</h3>
+        <span class="version-tag">v2</span>
+      </div>
+      <p class="desc">A SaaS platform for college community and club management — helping student groups organise events, members, and communication in one place. Currently in active development.</p>
+      <div class="project-tags"><span>Product design</span><span>SaaS</span><span>Community tooling</span></div>
+      <a class="project-link" href="#">GitHub repository →</a>
+    </div>
+
+    <div class="project-card">
+      <div class="project-top">
+        <h3>AVEN</h3>
+        <span class="version-tag">v1</span>
+      </div>
+      <p class="desc">The first working version of AVEN — an early exploration of what club and community management could look like for a college campus, hosted and live.</p>
+      <div class="project-tags"><span>Prototype</span><span>Netlify</span></div>
+      <a class="project-link" href="#">Live demo →</a>
+    </div>
+
+    <div class="project-card">
+      <div class="project-top">
+        <h3>AnnadataSetu</h3>
+        <span class="version-tag">v1</span>
+      </div>
+      <p class="desc">A concept platform aimed at bridging farmers and consumers more directly — built as a demonstration of product thinking applied to a real-world supply chain problem.</p>
+      <div class="project-tags"><span>Product concept</span><span>Netlify</span></div>
+      <a class="project-link" href="#">Live demo →</a>
+    </div>
+  </div>
+</section>
+
+<section class="contact" id="contact">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Contact</div>
+      <h2>Let's talk about what you're building.</h2>
+      <p>Open to conversations about internships, collaborations, or just talking product.</p>
+    </div>
+    <div class="contact-grid">
+      <div class="contact-links">
+        <div class="contact-row"><span>Name</span><span>Shubham Yadav</span></div>
+        <div class="contact-row"><span>Email</span><a href="mailto:hello@example.com">hello@example.com</a></div>
+        <div class="contact-row"><span>LinkedIn</span><a href="#">linkedin.com/in/shubhamy1</a></div>
+        <div class="contact-row"><span>GitHub</span><a href="#">github.com/placeholder</a></div>
+      </div>
+      <div>
+        <a class="contact-cta" href="mailto:hello@example.com">Say hello →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="foot mono">© 2026 Shubham Yadav · OIBSIP · WebDev · Level 1 · Task 2</footer>
+
+</body>
+</html>
